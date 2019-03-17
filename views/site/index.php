@@ -1,53 +1,94 @@
 <?php
 
+use yii\bootstrap\Nav;
+use yii\bootstrap\NavBar;
+use yii\widgets\LinkPager;
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'Yii Test';
 ?>
 <div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
+	
+	<?php
+    echo Nav::widget([
+        'options' => ['class' => 'navbar-nav nav-tabs'],
+        'items' => [
+            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl], 'active' => true],
+			['label' => 'Pending', 'url' => [Yii::$app->homeUrl]],
+			['label' => 'In progress', 'url' => [Yii::$app->homeUrl]],
+			['label' => 'Completed', 'url' => [Yii::$app->homeUrl]],
+			['label' => 'Canceled', 'url' => [Yii::$app->homeUrl]],
+			['label' => 'Error', 'url' => [Yii::$app->homeUrl]],
+        ],
+    ]);
+    ?>
+	
+	
+	<table class="table order-table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>User</th>
+				<th>Link</th>
+				<th>Quantity</th>
+				<th class="dropdown-th">
+					<div class="dropdown">
+						<button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Service
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li class="active"><a href=""><span class="label-id"><?=$ordersCount?></span> All</a></li>
+							<?php foreach ($services as $service): ?>
+								<li><a href=""><span class="label-id"><?= $service['order_count']?></span> <?= $service['name'];?></a></li>
+							<?php endforeach;?>
+						</ul>
+					</div>
+				</th>
+				<th>Status</th>
+				<th class="dropdown-th">
+					<div class="dropdown">
+						<button class="btn btn-th btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Mode
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li class="active"><a href="">All</a></li>
+							<li><a href="">Manual</a></li>
+							<li><a href="">Auto</a></li>
+						</ul>
+					</div>
+				</th>
+				<th>Created</th>
+			</tr>
+		</thead>
+    <tbody>
+	<?php foreach ($orders as $order) :?>
+		<tr>
+			<td><?= $order['id']; ?></td>
+			<td><?= $order['user']; ?></td>
+			<td class="link"><?= $order['link']; ?></td>
+			<td><?= $order['quantity']; ?></td>
+			<td class="service">
+				<span class="label-id"><?= $order['service']['id']; ?></span> <?= $order['service']['name']; ?>
+			</td>
+			<td><?= $order['status']; ?></td>
+			<td>
+				<?php
+					if (app\models\Order::MODE_MANUAL == $order['mode']) {
+						echo 'Manual';
+					}
+					else {
+						echo 'Auto';
+					}
+				?>
+			</td>
+			<td><nobr><?= date('Y-m-d', $order['created_at'])?></nobr> <nobr class="nowrap"><?= date('H:i:s', $order['created_at'])?></nobr></td>
+		</tr>
+	<?php endforeach;?>
+    </tbody>
+  </table>
+	
+<?= LinkPager::widget(['pagination' => $pages]); ?>
+	
 </div>

@@ -30,23 +30,20 @@ AppAsset::register($this);
     <?php
     NavBar::begin([
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar-default',
         ],
+		'renderInnerContainer' => false,
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
-            ['label' => 'Orders', 'url' => ['/site/index']],
+            ['label' => 'Orders', 'url' => [Yii::$app->homeUrl], 'active' => true],
         ],
     ]);
     NavBar::end();
     ?>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
+    <div class="container-fluid">
         <?= $content ?>
     </div>
 </div>

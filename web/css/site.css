@@ -90,6 +90,11 @@ a.desc:after {
     margin: 0 0 15px 0;
 }
 
+.navbar {
+	border: 0;
+	border-radius: 0;
+}
+
 /* align the logout "link" (button in form) of the navbar */
 .nav li > form > button.logout {
     padding: 15px;
@@ -112,4 +117,38 @@ a.desc:after {
 
 .nav > li > form > button.logout:focus {
     outline: none;
+}
+
+.navbar-nav.nav-tabs > li > a {
+	padding-bottom: 7px;
+	padding-top: 7px;
+	border-radius: 3px;
+}
+
+.nav-tabs {
+	border-bottom: 0;
+}
+
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:hover {
+    border-bottom: 1px solid #e7e7e7;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    background: #e7e7e7;
+}
+
+.label-id {
+    border: 1px solid #ddd;
+    background: none;
+    min-width: 30px;
+    display: inline-block;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: 1px;
+    border-radius: .25em;
 }
