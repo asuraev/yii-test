@@ -46,6 +46,11 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+			'rules' => [
+				'/' => 'site/index',
+				'/<status:\w+>' => 'site/index',
+            ],
+
         ],
     ],
     'params' => $params,

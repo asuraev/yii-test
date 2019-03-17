@@ -3,6 +3,8 @@
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\LinkPager;
+use yii\helpers\Url;
+use app\models\Order;
 /* @var $this yii\web\View */
 
 $this->title = 'Yii Test';
@@ -13,12 +15,12 @@ $this->title = 'Yii Test';
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav nav-tabs'],
         'items' => [
-            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl], 'active' => true],
-			['label' => 'Pending', 'url' => [Yii::$app->homeUrl]],
-			['label' => 'In progress', 'url' => [Yii::$app->homeUrl]],
-			['label' => 'Completed', 'url' => [Yii::$app->homeUrl]],
-			['label' => 'Canceled', 'url' => [Yii::$app->homeUrl]],
-			['label' => 'Error', 'url' => [Yii::$app->homeUrl]],
+            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl],		'active' => $status === false],
+			['label' => 'Pending', 'url' => [Url::to('/pending')],			'active' => $status === Order::STATUS_PENDING],
+			['label' => 'In progress', 'url' => [Url::to('/in_progress')],	'active' => $status === Order::STATUS_IN_PROGRESS],
+			['label' => 'Completed', 'url' => [Url::to('/completed')],		'active' => $status === Order::STATUS_COMPLETED],
+			['label' => 'Canceled', 'url' => [Url::to('/canceled')],		'active' => $status === Order::STATUS_CANCELED],
+			['label' => 'Error', 'url' => [Url::to('/error')],				'active' => $status === Order::STATUS_ERROR],
         ],
     ]);
     ?>
@@ -72,7 +74,27 @@ $this->title = 'Yii Test';
 			<td class="service">
 				<span class="label-id"><?= $order['service']['id']; ?></span> <?= $order['service']['name']; ?>
 			</td>
-			<td><?= $order['status']; ?></td>
+			<td>
+				<?php
+					switch ($order['status']) {
+						case Order::STATUS_PENDING:
+							echo 'Pending';
+						break;
+						case Order::STATUS_IN_PROGRESS:
+							echo 'In progress';
+						break;
+						case Order::STATUS_COMPLETED:
+							echo 'Completed';
+						break;
+						case Order::STATUS_CANCELED:
+							echo 'Canceled';
+						break;
+						case Order::STATUS_ERROR:
+							echo 'Error';
+						break;
+					}
+				?>
+			</td>
 			<td>
 				<?php
 					if (app\models\Order::MODE_MANUAL == $order['mode']) {

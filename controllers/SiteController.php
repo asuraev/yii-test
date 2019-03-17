@@ -26,18 +26,36 @@ class SiteController extends Controller
         ];
     }
 	
-	public function getRoute() {
-		return '/';
-	}
-
 	/**
      * Displays homepage.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($status = 'all')
     {
-		$query = Order::find();
+		switch ($status) {
+			case 'pending':
+				$status = Order::STATUS_PENDING;
+			break;
+			case 'in_progress':
+				$status = Order::STATUS_IN_PROGRESS;
+			break;
+			case 'completed':
+				$status = Order::STATUS_COMPLETED;
+			break;
+			case 'canceled':
+				$status = Order::STATUS_CANCELED;
+			break;
+			case 'error':
+				$status = Order::STATUS_ERROR;
+			break;
+			default: 
+				$status = false;
+		}
+		$where = $status !== false ? ['status' => $status] : '';
+		$query = Order::find()->where($where);
+		
+		
 		$ordersCount = $query->count();
 		$pages = new Pagination(['totalCount' => $ordersCount, 'pageSize' => 100]);
 	
@@ -52,12 +70,13 @@ class SiteController extends Controller
 		$services = Service::find()
 			->select("services.*, COUNT(orders.id) AS order_count")
 			->leftJoin('orders', 'orders.service_id = services.id')
+			->where($where)
 			->groupBy(['services.id'])
 			->asArray()
 			->all();
 		
         return $this->render('index',
-			compact('services', 'orders', 'pages', 'ordersCount')
+			compact('services', 'orders', 'pages', 'ordersCount', 'status')
 		);
     }
 }
