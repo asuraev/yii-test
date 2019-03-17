@@ -15,12 +15,12 @@ $this->title = 'Yii Test';
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav nav-tabs'],
         'items' => [
-            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl],		'active' => $status === false],
-			['label' => 'Pending', 'url' => [Url::to('/pending')],			'active' => $status === Order::STATUS_PENDING],
-			['label' => 'In progress', 'url' => [Url::to('/in_progress')],	'active' => $status === Order::STATUS_IN_PROGRESS],
-			['label' => 'Completed', 'url' => [Url::to('/completed')],		'active' => $status === Order::STATUS_COMPLETED],
-			['label' => 'Canceled', 'url' => [Url::to('/canceled')],		'active' => $status === Order::STATUS_CANCELED],
-			['label' => 'Error', 'url' => [Url::to('/error')],				'active' => $status === Order::STATUS_ERROR],
+            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl],		'active' => $filter['status'] == 'all'],
+			['label' => 'Pending', 'url' => [Url::to('/pending')],			'active' => $filter['status'] == 'pending'],
+			['label' => 'In progress', 'url' => [Url::to('/in_progress')],	'active' => $filter['status'] == 'in_progress'],
+			['label' => 'Completed', 'url' => [Url::to('/completed')],		'active' => $filter['status'] == 'completed'],
+			['label' => 'Canceled', 'url' => [Url::to('/canceled')],		'active' => $filter['status'] == 'canceled'],
+			['label' => 'Error', 'url' => [Url::to('/error')],				'active' => $filter['status'] == 'error'],
         ],
     ]);
     ?>
@@ -40,9 +40,11 @@ $this->title = 'Yii Test';
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<li class="active"><a href=""><span class="label-id"><?=$ordersCount?></span> All</a></li>
+							<?php $path = '/'.('all' != $filter['status'] ? $filter['status'] : '').('all' != $filter['mode'] ? '/mode/'.$filter['mode'] : ''); ?>
+							<li <?= ('all' == $filter['service'] ? 'class="active"' : '') ?>><a href="<?= Url::to([$path]) ?>"><span class="label-id"><?=$allOrdersCount?></span> All</a></li>
 							<?php foreach ($services as $service): ?>
-								<li><a href=""><span class="label-id"><?= $service['order_count']?></span> <?= $service['name'];?></a></li>
+								<?php $path = '/'.('all' != $filter['status'] ? $filter['status'] : '').('/service/'.$service['id']).('all' != $filter['mode'] ? '/mode/'.$filter['mode'] : ''); ?>
+							<li <?= ($service['id'] === $filter['service'] ? 'class="active"' : '') ?>><a href="<?= Url::to([$path]) ?>"><span class="label-id"><?= (isset($service['order_count']) ? $service['order_count'] : 0 )?></span> <?= $service['name'];?></a></li>
 							<?php endforeach;?>
 						</ul>
 					</div>
@@ -55,9 +57,12 @@ $this->title = 'Yii Test';
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<li class="active"><a href="">All</a></li>
-							<li><a href="">Manual</a></li>
-							<li><a href="">Auto</a></li>
+							<?php $path = '/'.('all' != $filter['status'] ? $filter['status'] : '').('all' != $filter['service'] ? '/service/'.$filter['service'] : ''); ?>
+							<li <?= ('all' == $filter['mode'] ? 'class="active"' : '') ?>><a href="<?= Url::to([$path]) ?>">All</a></li>
+							<?php $path = '/'.('all' != $filter['status'] ? $filter['status'] : '').('all' != $filter['service'] ? '/service/'.$filter['service'] : '').'/mode/'.Order::MODE_MANUAL; ?>
+							<li <?= (Order::MODE_MANUAL === $filter['mode'] ? 'class="active"' : '') ?>><a href="<?= Url::to([$path]) ?>">Manual</a></li>
+							<?php $path = '/'.('all' != $filter['status'] ? $filter['status'] : '').('all' != $filter['service'] ? '/service/'.$filter['service'] : '').'/mode/'.Order::MODE_AUTO; ?>
+							<li <?= (Order::MODE_AUTO === $filter['mode'] ? 'class="active"' : '') ?>><a href="<?= Url::to([$path]) ?>">Auto</a></li>
 						</ul>
 					</div>
 				</th>

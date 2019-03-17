@@ -6,8 +6,8 @@ use yii\db\ActiveRecord;
 
 class Order extends ActiveRecord
 {
-	const MODE_MANUAL	= 0;
-	const MODE_AUTO		= 1;
+	const MODE_MANUAL	= '0';
+	const MODE_AUTO		= '1';
 	
 	const STATUS_PENDING		= 0;
 	const STATUS_IN_PROGRESS	= 1;

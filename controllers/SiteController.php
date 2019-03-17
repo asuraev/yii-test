@@ -31,30 +31,37 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($status = 'all')
+    public function actionIndex($status = 'all', $service = 'all', $mode = 'all')
     {
 		switch ($status) {
 			case 'pending':
-				$status = Order::STATUS_PENDING;
+				$status_id = Order::STATUS_PENDING;
 			break;
 			case 'in_progress':
-				$status = Order::STATUS_IN_PROGRESS;
+				$status_id = Order::STATUS_IN_PROGRESS;
 			break;
 			case 'completed':
-				$status = Order::STATUS_COMPLETED;
+				$status_id = Order::STATUS_COMPLETED;
 			break;
 			case 'canceled':
-				$status = Order::STATUS_CANCELED;
+				$status_id = Order::STATUS_CANCELED;
 			break;
 			case 'error':
-				$status = Order::STATUS_ERROR;
+				$status_id = Order::STATUS_ERROR;
 			break;
 			default: 
-				$status = false;
+				$status_id = false;
 		}
-		$where = $status !== false ? ['status' => $status] : '';
-		$query = Order::find()->where($where);
 		
+		$where = $status_id !== false ? ['status' => $status_id] : [];
+		if ('all' != $mode) {
+			$where = array_merge($where, ['mode' => (int)$mode]);
+		}
+		$allOrdersCount = Order::find()->where($where)->count();
+		if ('all' != $service) {
+			$where = array_merge($where, ['service_id' => (int)$service]);
+		}
+		$query = Order::find()->where($where);
 		
 		$ordersCount = $query->count();
 		$pages = new Pagination(['totalCount' => $ordersCount, 'pageSize' => 100]);
@@ -66,17 +73,20 @@ class SiteController extends Controller
 			->limit(100)
 			->all();
 		
-		
-		$services = Service::find()
-			->select("services.*, COUNT(orders.id) AS order_count")
-			->leftJoin('orders', 'orders.service_id = services.id')
+		$countSubquery = Order::find()
+			->select('service_id, COUNT(id) AS order_count')
 			->where($where)
-			->groupBy(['services.id'])
+			->groupBy('service_id');
+		$services = Service::find()
+			->select("services.*, order_count")
+			->leftJoin(['o' => $countSubquery], 'o.service_id = services.id')
 			->asArray()
 			->all();
 		
+		$filter = compact('status', 'service', 'mode');
+		
         return $this->render('index',
-			compact('services', 'orders', 'pages', 'ordersCount', 'status')
+			compact('services', 'orders', 'pages', 'allOrdersCount', 'filter')
 		);
     }
 }

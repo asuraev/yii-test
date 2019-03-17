@@ -49,6 +49,12 @@ $config = [
 			'rules' => [
 				'/' => 'site/index',
 				'/<status:\w+>' => 'site/index',
+				'mode/<mode:\d+>' => 'site/index',
+				'service/<service:\d+>' => 'site/index',
+				'service/<service:\d+>/mode/<mode:\d+>' => 'site/index',
+				'/<status:\w+>/mode/<mode:\d+>' => 'site/index',
+				'/<status:\w+>/service/<service:\d+>' => 'site/index',
+				'/<status:\w+>/service/<service:\d+>/mode/<mode:\d+>' => 'site/index',
             ],
 
         ],
