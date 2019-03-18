@@ -152,3 +152,12 @@ a.desc:after {
     vertical-align: 1px;
     border-radius: .25em;
 }
+
+.search-form .search-select-wrap .search-select {
+	border-radius: 0;
+}
+
+.pagination-counters {
+	margin-top: 20px;
+	text-align: right;
+}

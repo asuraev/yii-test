@@ -5,6 +5,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\LinkPager;
 use yii\helpers\Url;
 use app\models\Order;
+USE app\controllers\SiteController;
 /* @var $this yii\web\View */
 
 $this->title = 'Yii Test';
@@ -12,18 +13,32 @@ $this->title = 'Yii Test';
 <div class="site-index">
 	
 	<?php
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav nav-tabs'],
-        'items' => [
-            ['label' => 'All orders', 'url' => [Yii::$app->homeUrl],		'active' => $filter['status'] == 'all'],
+	echo Nav::widget([
+		'options' => ['class' => 'navbar-nav nav-tabs'],
+		'items' => [
+			['label' => 'All orders', 'url' => [Yii::$app->homeUrl],		'active' => $filter['status'] == 'all'],
 			['label' => 'Pending', 'url' => [Url::to('/pending')],			'active' => $filter['status'] == 'pending'],
 			['label' => 'In progress', 'url' => [Url::to('/in_progress')],	'active' => $filter['status'] == 'in_progress'],
 			['label' => 'Completed', 'url' => [Url::to('/completed')],		'active' => $filter['status'] == 'completed'],
 			['label' => 'Canceled', 'url' => [Url::to('/canceled')],		'active' => $filter['status'] == 'canceled'],
 			['label' => 'Error', 'url' => [Url::to('/error')],				'active' => $filter['status'] == 'error'],
-        ],
-    ]);
-    ?>
+		],
+	]);
+	?>
+	
+	<form class="pull-right form-inline search-form" action="<?= Url::to('/'.('all' != $filter['status'] ? $filter['status'] : ''))?>" method="get">
+		<div class="input-group">
+			<input type="text" name="search" class="form-control" value="<?= $filter['search']?>" placeholder="Search orders">
+			<span class="input-group-btn search-select-wrap">
+				<select class="form-control search-select" name="search_type">
+					<option value="<?= SiteController::SEARCH_TYPE_ORDER_ID?>" <?= (SiteController::SEARCH_TYPE_ORDER_ID == $filter['search_type'] ? 'selected="selected"' : '') ?>>Order ID</option>
+					<option value="<?= SiteController::SEARCH_TYPE_LINK?>" <?= (SiteController::SEARCH_TYPE_LINK == $filter['search_type'] ? 'selected="selected"' : '') ?>>Link</option>
+					<option value="<?= SiteController::SEARCH_TYPE_USERNAME?>" <?= (SiteController::SEARCH_TYPE_USERNAME == $filter['search_type'] ? 'selected="selected"' : '') ?>>Username</option>
+				</select>
+				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+			</span>
+		</div>
+	</form>
 	
 	
 	<table class="table order-table">
@@ -113,9 +128,17 @@ $this->title = 'Yii Test';
 			<td><nobr><?= date('Y-m-d', $order['created_at'])?></nobr> <nobr class="nowrap"><?= date('H:i:s', $order['created_at'])?></nobr></td>
 		</tr>
 	<?php endforeach;?>
-    </tbody>
-  </table>
-	
-<?= LinkPager::widget(['pagination' => $pages]); ?>
+	</tbody>
+	</table>
+	<div class="col-sm-8">
+		<?= LinkPager::widget(['pagination' => $pages]); ?>
+	</div>
+	<div class="col-sm-4 pagination-counters">
+		<?php if ($pagination['total'] > 100): ?>
+			<?= $pagination['from']?> to <?= ($pagination['to'] > $pagination['total'] ? $pagination['total'] : $pagination['to'])?> of <?= $pagination['total']?>
+		<?php else:?>
+			<?= $pagination['total']?>
+		<?php endif;?>
+	</div>
 	
 </div>
